@@ -1,112 +1,222 @@
-<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="retail_sales_data.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="3457"/><column_width id="4" width="0"/><expanded_item id="0" parent="0"/><expanded_item id="0" parent="1"/><expanded_item id="0" parent="0"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="retail_sales_data" custom_title="0" dock_id="1" table="4,17:mainretail_sales_data"/><dock_state state="000000ff00000000fd0000000100000002000005bb00000390fc0100000001fb000000160064006f0063006b00420072006f00770073006500310100000000000005bb0000013f00ffffff000005bb0000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="retail_sales_data" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="95"/><column index="2" value="83"/><column index="3" value="199"/><column index="4" value="191"/><column index="5" value="103"/><column index="6" value="295"/><column index="7" value="87"/><column index="8" value="127"/><column index="9" value="63"/><column index="10" value="79"/><column index="11" value="39"/><column index="12" value="55"/><column index="13" value="55"/><column index="14" value="121"/><column index="15" value="87"/><column index="16" value="55"/><column index="17" value="79"/><column index="18" value="71"/><column index="19" value="102"/><column index="20" value="95"/><column index="21" value="95"/><column index="22" value="111"/><column index="23" value="143"/><column index="24" value="95"/><column index="25" value="79"/><column index="26" value="106"/><column index="27" value="109"/><column index="28" value="87"/><column index="29" value="51"/><column index="30" value="223"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="Sales by Month">--Sales by Month--
---plot as line graph--
-
-SELECT
-	Month,
-	CAST(Year AS INTEGER) AS Year,
-	CAST(SUM(Total_amount) AS INTEGER) AS Total_Sales_Amount
-FROM retail_sales_data
-WHERE Month IS NOT NULL
-GROUP BY Month
-ORDER BY 
-	substr(Date, -4) || '-' ||
-    printf('%02d', substr(Date, 1, instr(Date, '/') - 1)) || '-' ||
-    printf('%02d', substr(Date, instr(Date, '/') + 1, instr(substr(Date, instr(Date, '/') + 1), '/') - 1));</sql><sql name="Sales by Category">--Sales by Category--
---plot as column--
-
-SELECT
-	Product_Type,
-	Product_Category,
-	CAST(SUM(Total_Purchases) AS INTEGER) AS Total_Products_Sold
-FROM retail_sales_data
-WHERE Total_Purchases IS NOT NULL
-GROUP BY Product_Type
-ORDER BY Product_Category, Total_Products_Sold DESC;
-</sql><sql name="Sales by Country">--Sales by Country--
---plot as bar, stars--
-
-SELECT
-	r1.Country,
-	CAST(SUM(Total_amount) AS INTEGER) AS Total_Sales,
-	CAST(SUM(Total_Amount) / COUNT(DISTINCT City) AS INTEGER) AS Sales_per_Location,
-	ROUND(AVG(Ratings),2) AS Ratings,
-	(SELECT r2.Product_Category
-        FROM retail_sales_data r2
-        WHERE r2.Country = r1.Country
-        GROUP BY r2.Product_Category
-        ORDER BY COUNT(*) DESC
-        LIMIT 1
-	) AS Most_Popular_Category
-FROM retail_sales_data r1
-WHERE r1.Country IS NOT NULL
-GROUP BY r1.Country
-ORDER BY Sales_per_Location DESC;</sql><sql name="Brand Performance">--Brand Performance--
---plot as grouped bar--
-
-SELECT
-	Product_Brand,
-	Product_Category,
-	ROUND(AVG(Ratings) ,2) AS Ratings
-FROM retail_sales_data
-WHERE Product_Brand IS NOT NULL
-GROUP BY Product_Brand
-ORDER BY Product_Category, Ratings DESC;
-</sql><sql name="Brand preference by age and gender">--Brand Preference by Age and Gender--
---plot as pyramids--
-
-SELECT
-	Product_Brand,
-	Product_Category,
-	CAST(SUM(Total_Purchases) FILTER (WHERE Gender='Female') AS INTEGER)  AS Female,
-	CAST(SUM(Total_Purchases) FILTER (WHERE Gender='Male') AS INTEGER) AS Male,
-	ROUND(AVG(Age),2) AS Avg_Age
-FROM retail_sales_data
-WHERE Product_Brand IS NOT NULL
-GROUP BY Product_Brand
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="retail_sales_data.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="3457"/><column_width id="4" width="0"/><expanded_item id="0" parent="0"/><expanded_item id="0" parent="1"/><expanded_item id="0" parent="0"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><table title="retail_sales_data" custom_title="0" dock_id="1" table="4,17:mainretail_sales_data"/><dock_state state="000000ff00000000fd0000000100000002000005bb00000390fc0100000001fb000000160064006f0063006b00420072006f00770073006500310100000000000005bb0000013f00ffffff000005bb0000000000000004000000040000000800000008fc00000000"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="retail_sales_data" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_" freeze_columns="0"><sort/><column_widths><column index="1" value="95"/><column index="2" value="83"/><column index="3" value="199"/><column index="4" value="191"/><column index="5" value="103"/><column index="6" value="295"/><column index="7" value="87"/><column index="8" value="127"/><column index="9" value="63"/><column index="10" value="79"/><column index="11" value="39"/><column index="12" value="55"/><column index="13" value="55"/><column index="14" value="121"/><column index="15" value="87"/><column index="16" value="55"/><column index="17" value="79"/><column index="18" value="71"/><column index="19" value="102"/><column index="20" value="95"/><column index="21" value="95"/><column index="22" value="111"/><column index="23" value="143"/><column index="24" value="95"/><column index="25" value="79"/><column index="26" value="106"/><column index="27" value="109"/><column index="28" value="87"/><column index="29" value="51"/><column index="30" value="223"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="Sales by Month">--Sales by Month--
+
+--plot as line graph--
+
+
+
+SELECT
+
+	Month,
+
+	CAST(Year AS INTEGER) AS Year,
+
+	CAST(SUM(Total_amount) AS INTEGER) AS Total_Sales_Amount
+
+FROM retail_sales_data
+
+WHERE Month IS NOT NULL
+
+GROUP BY Month
+
+ORDER BY 
+
+	substr(Date, -4) || '-' ||
+
+    printf('%02d', substr(Date, 1, instr(Date, '/') - 1)) || '-' ||
+
+    printf('%02d', substr(Date, instr(Date, '/') + 1, instr(substr(Date, instr(Date, '/') + 1), '/') - 1));</sql><sql name="Sales by Category">--Sales by Category--
+
+--plot as column--
+
+
+
+SELECT
+
+	Product_Type,
+
+	Product_Category,
+
+	CAST(SUM(Total_Purchases) AS INTEGER) AS Total_Products_Sold
+
+FROM retail_sales_data
+
+WHERE Total_Purchases IS NOT NULL
+
+GROUP BY Product_Type
+
+ORDER BY Product_Category, Total_Products_Sold DESC;
+
+</sql><sql name="Sales by Country">--Sales by Country--
+
+--plot as bar, stars--
+
+
+
+SELECT
+
+	r1.Country,
+
+	CAST(SUM(Total_amount) AS INTEGER) AS Total_Sales,
+
+	CAST(SUM(Total_Amount) / COUNT(DISTINCT City) AS INTEGER) AS Sales_per_Location,
+
+	ROUND(AVG(Ratings),2) AS Ratings,
+
+	(SELECT r2.Product_Category
+
+        FROM retail_sales_data r2
+
+        WHERE r2.Country = r1.Country
+
+        GROUP BY r2.Product_Category
+
+        ORDER BY COUNT(*) DESC
+
+        LIMIT 1
+
+	) AS Most_Popular_Category
+
+FROM retail_sales_data r1
+
+WHERE r1.Country IS NOT NULL
+
+GROUP BY r1.Country
+
+ORDER BY Sales_per_Location DESC;</sql><sql name="Brand Performance">--Brand Performance--
+
+--plot as grouped bar--
+
+
+
+SELECT
+
+	Product_Brand,
+
+	Product_Category,
+
+	ROUND(AVG(Ratings) ,2) AS Ratings
+
+FROM retail_sales_data
+
+WHERE Product_Brand IS NOT NULL
+
+GROUP BY Product_Brand
+
+ORDER BY Product_Category, Ratings DESC;
+
+</sql><sql name="Brand preference by age and gender">--Brand Preference by Age and Gender--
+
+--plot as pyramids--
+
+
+
+SELECT
+
+	Product_Brand,
+
+	Product_Category,
+
+	CAST(SUM(Total_Purchases) FILTER (WHERE Gender='Female') AS INTEGER)  AS Female,
+
+	CAST(SUM(Total_Purchases) FILTER (WHERE Gender='Male') AS INTEGER) AS Male,
+
+	ROUND(AVG(Age),2) AS Avg_Age
+
+FROM retail_sales_data
+
+WHERE Product_Brand IS NOT NULL
+
+GROUP BY Product_Brand
+
 ORDER BY Product_Category, SUM(Total_Purchases);
-</sql><sql name="Brand preference by income">--Brand Preference by Income Background--
---plot as clustered columns--
-
-SELECT
-	Income,
-	ROUND(SUM(Total_Purchases) FILTER (WHERE Payment_Method='Cash') * 100 / SUM(Total_Purchases) ,1) AS Cash,
-	ROUND(SUM(Total_Purchases) FILTER (WHERE Payment_Method='Credit Card') * 100 / SUM(Total_Purchases) ,1) AS Credit_Card,
-	ROUND(SUM(Total_Purchases) FILTER (WHERE Payment_Method='Debit Card') * 100 / SUM(Total_Purchases) ,1) AS Debit_Card,
-	ROUND(SUM(Total_Purchases) FILTER (WHERE Payment_Method='PayPal') * 100 / SUM(Total_Purchases) ,1) AS PayPal
-FROM retail_sales_data
-WHERE Income IS NOT NULL
-GROUP BY Income
-ORDER BY Credit_Card;</sql><sql name="Payment method by age">--Payment Method Preference by Age--
---plot as pie--
-
-SELECT
-	Payment_Method,
-	ROUND(AVG(Age) ,2) AS Avg_Age
-FROM retail_sales_data
-WHERE Payment_Method IS NOT NULL
-GROUP BY Payment_Method;</sql><sql name="Payment method preference by country">--Payment Method Preference by Country--
---plot as stacked column--
-
-SELECT
-	Country,
-	ROUND(SUM(Total_Purchases) FILTER (WHERE Payment_Method='Cash') * 100 / SUM(Total_Purchases) ,1) AS Cash,
-	ROUND(SUM(Total_Purchases) FILTER (WHERE Payment_Method='Credit Card') * 100 / SUM(Total_Purchases) ,1) AS Credit_Card,
-	ROUND(SUM(Total_Purchases) FILTER (WHERE Payment_Method='Debit Card') * 100 / SUM(Total_Purchases) ,1) AS Debit_Card,
-	ROUND(SUM(Total_Purchases) FILTER (WHERE Payment_Method='PayPal') * 100 / SUM(Total_Purchases) ,1) AS PayPal
-FROM retail_sales_data
-WHERE Country IS NOT NULL
-GROUP BY Country
-ORDER BY Country;</sql><sql name="Shipping preference by location">--Shipping Preference by Location--
---plot as bubble map, stacked column--
-
-SELECT
-	City,
-	Country,
-	CAST(SUM(Total_Purchases) AS INTEGER) AS Total_Order_Volumn,
-	ROUND(SUM(Total_Purchases) FILTER (WHERE Shipping_Method='Standard') * 100 / SUM(Total_Purchases) ,1) AS Standard,
-	ROUND(SUM(Total_Purchases) FILTER (WHERE Shipping_Method='Express') * 100 / SUM(Total_Purchases) ,1) AS Express,
-	ROUND(SUM(Total_Purchases) FILTER (WHERE Shipping_Method='Same-Day') * 100 / SUM(Total_Purchases) ,1) AS Same_Day
-FROM retail_sales_data
-WHERE City IS NOT NULL
-GROUP BY City
+</sql><sql name="Payment method by income">--Brand Preference by Income Background--
+
+--plot as clustered columns--
+
+
+
+SELECT
+
+	Income,
+
+	ROUND(SUM(Total_Purchases) FILTER (WHERE Payment_Method='Cash') * 100 / SUM(Total_Purchases) ,1) AS Cash,
+
+	ROUND(SUM(Total_Purchases) FILTER (WHERE Payment_Method='Credit Card') * 100 / SUM(Total_Purchases) ,1) AS Credit_Card,
+
+	ROUND(SUM(Total_Purchases) FILTER (WHERE Payment_Method='Debit Card') * 100 / SUM(Total_Purchases) ,1) AS Debit_Card,
+
+	ROUND(SUM(Total_Purchases) FILTER (WHERE Payment_Method='PayPal') * 100 / SUM(Total_Purchases) ,1) AS PayPal
+
+FROM retail_sales_data
+
+WHERE Income IS NOT NULL
+
+GROUP BY Income
+
+ORDER BY Credit_Card;</sql><sql name="Payment method by age">--Payment Method Preference by Age--
+
+--plot as pie--
+
+
+
+SELECT
+
+	Payment_Method,
+
+	ROUND(AVG(Age) ,2) AS Avg_Age
+
+FROM retail_sales_data
+
+WHERE Payment_Method IS NOT NULL
+
+GROUP BY Payment_Method;</sql><sql name="Payment method preference by country">--Payment Method Preference by Country--
+
+--plot as stacked column--
+
+
+
+SELECT
+
+	Country,
+
+	ROUND(SUM(Total_Purchases) FILTER (WHERE Payment_Method='Cash') * 100 / SUM(Total_Purchases) ,1) AS Cash,
+
+	ROUND(SUM(Total_Purchases) FILTER (WHERE Payment_Method='Credit Card') * 100 / SUM(Total_Purchases) ,1) AS Credit_Card,
+
+	ROUND(SUM(Total_Purchases) FILTER (WHERE Payment_Method='Debit Card') * 100 / SUM(Total_Purchases) ,1) AS Debit_Card,
+
+	ROUND(SUM(Total_Purchases) FILTER (WHERE Payment_Method='PayPal') * 100 / SUM(Total_Purchases) ,1) AS PayPal
+
+FROM retail_sales_data
+
+WHERE Country IS NOT NULL
+
+GROUP BY Country
+
+ORDER BY Country;</sql><sql name="Shipping preference by location">--Shipping Preference by Location--
+
+--plot as bubble map, stacked column--
+
+
+
+SELECT
+
+	City,
+
+	Country,
+
+	CAST(SUM(Total_Purchases) AS INTEGER) AS Total_Order_Volumn,
+
+	ROUND(SUM(Total_Purchases) FILTER (WHERE Shipping_Method='Standard') * 100 / SUM(Total_Purchases) ,1) AS Standard,
+
+	ROUND(SUM(Total_Purchases) FILTER (WHERE Shipping_Method='Express') * 100 / SUM(Total_Purchases) ,1) AS Express,
+
+	ROUND(SUM(Total_Purchases) FILTER (WHERE Shipping_Method='Same-Day') * 100 / SUM(Total_Purchases) ,1) AS Same_Day
+
+FROM retail_sales_data
+
+WHERE City IS NOT NULL
+
+GROUP BY City
+
 ORDER BY Country DESC, Total_Order_Volumn DESC;</sql><current_tab id="6"/></tab_sql></sqlb_project>
