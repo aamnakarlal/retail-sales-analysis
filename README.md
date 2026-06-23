@@ -8,6 +8,7 @@ SQL and Tableau analysis of retail sales data exploring customer preferences and
 
 ## Dataset
 Retail sales dataset containing customer demographics, sales data, shipping & payment preferences across 5 countries.
+https://www.kaggle.com/datasets/sahilprajapati143/retail-analysis-large-dataset?resource=download
 
 ## Dashboards
 
